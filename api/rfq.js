@@ -8,7 +8,6 @@ function buildEmailText(formData) {
     `Name: ${formData.name}`,
     `Company: ${formData.company}`,
     `Email: ${formData.email}`,
-    `Phone: ${formData.phone || 'Not provided'}`,
     `Country: ${formData.country}`,
     `Part Number: ${formData.partNumber}`,
     `Manufacturer / OEM: ${formData.manufacturer || 'Not provided'}`,

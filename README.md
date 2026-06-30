@@ -22,7 +22,7 @@ Create a local `.env` if you want the values available in development, and add t
 ```bash
 RESEND_API_KEY=your_resend_api_key
 RFQ_FROM_EMAIL=Qantara RFQ <rfq@yourdomain.com>
-RFQ_TO_EMAIL=info@qantara.uk
+RFQ_TO_EMAIL=enquiries@qantara.uk
 ```
 
 Notes:

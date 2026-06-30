@@ -111,8 +111,7 @@ function Footer() {
         <div>
           <p className="footer-title">Contact</p>
           <div className="footer-links">
-            <a href="mailto:info@qantara.uk">info@qantara.uk</a>
-            <a href="tel:+440000000000">+44 0000 000000</a>
+            <a href="mailto:enquiries@qantara.uk">enquiries@qantara.uk</a>
             <span>United Kingdom</span>
           </div>
         </div>

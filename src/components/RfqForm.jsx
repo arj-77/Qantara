@@ -95,10 +95,6 @@ export function RfqForm() {
             {errors.email ? <span className="field-error">{errors.email}</span> : null}
           </label>
           <label>
-            Phone
-            <input name="phone" value={formData.phone} onChange={handleChange} />
-          </label>
-          <label>
             Country
             <input name="country" value={formData.country} onChange={handleChange} />
             {errors.country ? <span className="field-error">{errors.country}</span> : null}
@@ -179,8 +175,7 @@ export function RfqForm() {
         <p className="eyebrow">Contact Details</p>
         <h2>Commercial contact placeholder</h2>
         <div className="contact-card__items">
-          <a href="mailto:info@qantara.uk">info@qantara.uk</a>
-          <a href="tel:+440000000000">+44 0000 000000</a>
+          <a href="mailto:enquiries@qantara.uk">enquiries@qantara.uk</a>
           <span>United Kingdom</span>
         </div>
         <p>
