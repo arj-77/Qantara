@@ -7,6 +7,7 @@ export function RfqForm() {
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [pulseFields, setPulseFields] = useState([])
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -31,6 +32,10 @@ export function RfqForm() {
 
     if (Object.keys(nextErrors).length > 0) {
       setSubmitted(false)
+      setPulseFields([])
+      setTimeout(() => {
+        setPulseFields(Object.keys(nextErrors))
+      }, 0)
       return
     }
 
@@ -66,6 +71,31 @@ export function RfqForm() {
       })
   }
 
+  function getFieldProps(name) {
+    const isInvalid = Boolean(errors[name])
+    const shouldPulse = pulseFields.includes(name)
+
+    return {
+      'aria-invalid': isInvalid ? 'true' : 'false',
+      className: [
+        'field-control',
+        isInvalid ? 'field-control--invalid' : '',
+        shouldPulse ? 'field-control--pulse' : '',
+      ]
+        .filter(Boolean)
+        .join(' '),
+    }
+  }
+
+  function renderLabel(label, isRequired = false) {
+    return (
+      <span className="field-label">
+        {label}
+        {isRequired ? <span className="required-mark" aria-hidden="true"> *</span> : null}
+      </span>
+    )
+  }
+
   return (
     <div id="rfq-form" className="rfq-layout anchor-target">
       <form className="rfq-form card" noValidate onSubmit={handleSubmit}>
@@ -80,53 +110,65 @@ export function RfqForm() {
 
         <div className="form-grid">
           <label>
-            Name
-            <input name="name" value={formData.name} onChange={handleChange} />
+            {renderLabel('Name', true)}
+            <input name="name" value={formData.name} onChange={handleChange} {...getFieldProps('name')} />
             {errors.name ? <span className="field-error">{errors.name}</span> : null}
           </label>
           <label>
-            Company
-            <input name="company" value={formData.company} onChange={handleChange} />
+            {renderLabel('Company', true)}
+            <input name="company" value={formData.company} onChange={handleChange} {...getFieldProps('company')} />
             {errors.company ? <span className="field-error">{errors.company}</span> : null}
           </label>
           <label>
-            Email
-            <input name="email" type="email" value={formData.email} onChange={handleChange} />
+            {renderLabel('Email', true)}
+            <input
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              {...getFieldProps('email')}
+            />
             {errors.email ? <span className="field-error">{errors.email}</span> : null}
           </label>
           <label>
-            Country
-            <input name="country" value={formData.country} onChange={handleChange} />
+            {renderLabel('Country', true)}
+            <input name="country" value={formData.country} onChange={handleChange} {...getFieldProps('country')} />
             {errors.country ? <span className="field-error">{errors.country}</span> : null}
           </label>
           <label>
-            Part Number
-            <input name="partNumber" value={formData.partNumber} onChange={handleChange} />
+            {renderLabel('Part Number', true)}
+            <input
+              name="partNumber"
+              value={formData.partNumber}
+              onChange={handleChange}
+              {...getFieldProps('partNumber')}
+            />
             {errors.partNumber ? <span className="field-error">{errors.partNumber}</span> : null}
           </label>
           <label>
-            Manufacturer / OEM
-            <input name="manufacturer" value={formData.manufacturer} onChange={handleChange} />
+            {renderLabel('Manufacturer / OEM')}
+            <input name="manufacturer" value={formData.manufacturer} onChange={handleChange} {...getFieldProps('manufacturer')} />
           </label>
           <label>
-            Quantity
-            <input name="quantity" value={formData.quantity} onChange={handleChange} />
+            {renderLabel('Quantity', true)}
+            <input name="quantity" value={formData.quantity} onChange={handleChange} {...getFieldProps('quantity')} />
             {errors.quantity ? <span className="field-error">{errors.quantity}</span> : null}
           </label>
           <label>
-            Required Delivery Location
+            {renderLabel('Required Delivery Location', true)}
             <input
               name="deliveryLocation"
               value={formData.deliveryLocation}
               onChange={handleChange}
+              {...getFieldProps('deliveryLocation')}
             />
             {errors.deliveryLocation ? (
               <span className="field-error">{errors.deliveryLocation}</span>
             ) : null}
           </label>
           <label>
-            Urgency
-            <select name="urgency" value={formData.urgency} onChange={handleChange}>
+            {renderLabel('Urgency', true)}
+            <select name="urgency" value={formData.urgency} onChange={handleChange} {...getFieldProps('urgency')}>
               <option value="">Select urgency</option>
               <option value="urgent">Urgent replacement</option>
               <option value="planned">Planned procurement</option>
@@ -135,8 +177,8 @@ export function RfqForm() {
             {errors.urgency ? <span className="field-error">{errors.urgency}</span> : null}
           </label>
           <label className="form-grid__full">
-            Additional Notes
-            <textarea name="notes" rows="5" value={formData.notes} onChange={handleChange} />
+            {renderLabel('Additional Notes')}
+            <textarea name="notes" rows="5" value={formData.notes} onChange={handleChange} {...getFieldProps('notes')} />
           </label>
         </div>
 
