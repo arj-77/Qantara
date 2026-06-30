@@ -136,6 +136,7 @@ function Footer() {
 export function Layout({ children }) {
   return (
     <>
+      <div id="home" aria-hidden="true" />
       <SmoothScroll />
       <Header />
       <main>{children}</main>

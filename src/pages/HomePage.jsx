@@ -12,7 +12,7 @@ export function HomePage() {
         description="Qantara supports businesses with OEM machinery parts sourcing, supplier identification, price comparison, lead-time comparison, and international procurement support."
       />
 
-      <section id="home" className="hero hero--single">
+      <section className="hero hero--single">
         <div className="container hero-single__container">
           <Reveal className="hero-single__content">
             <p className="eyebrow">Qantara</p>
