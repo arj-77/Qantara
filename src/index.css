@@ -81,7 +81,7 @@ main {
 }
 
 section[id] {
-  scroll-margin-top: 8.5rem;
+  scroll-margin-top: 10rem;
 }
 
 .eyebrow {
@@ -150,9 +150,9 @@ h3 {
   border: 1px solid rgba(255, 255, 255, 0.54);
   border-radius: 2rem;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(248, 250, 252, 0.42) 52%, rgba(255, 255, 255, 0.5)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.18)),
-    rgba(255, 255, 255, 0.34);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(248, 250, 252, 0.56) 52%, rgba(255, 255, 255, 0.64)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.28)),
+    rgba(255, 255, 255, 0.48);
   backdrop-filter: blur(34px) saturate(175%);
   -webkit-backdrop-filter: blur(34px) saturate(175%);
   box-shadow:
@@ -183,8 +183,7 @@ h3 {
   background:
     radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.18), transparent 28%),
     radial-gradient(circle at 82% 12%, rgba(198, 144, 46, 0.05), transparent 24%);
-  mix-blend-mode: screen;
-  opacity: 0.78;
+  opacity: 0.56;
 }
 
 .header-brand {

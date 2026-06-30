@@ -36,7 +36,7 @@ export function SmoothScroll() {
 
     function getHeaderOffset() {
       const header = document.querySelector('.site-header')
-      return header instanceof HTMLElement ? header.offsetHeight + 12 : 108
+      return header instanceof HTMLElement ? header.getBoundingClientRect().height + 28 : 128
     }
 
     function scrollToHash(hash, immediate = false) {
@@ -80,19 +80,32 @@ export function SmoothScroll() {
         window.history.pushState(null, '', href)
       }
 
-      scrollToHash(href)
+      requestAnimationFrame(() => {
+        scrollToHash(href)
+      })
     }
 
     document.addEventListener('click', handleDocumentClick)
 
-    if (window.location.hash) {
+    function syncInitialHashPosition() {
+      if (!window.location.hash) {
+        return
+      }
+
       requestAnimationFrame(() => {
-        scrollToHash(window.location.hash, true)
+        requestAnimationFrame(() => {
+          scrollToHash(window.location.hash, true)
+        })
       })
     }
 
+    syncInitialHashPosition()
+    window.addEventListener('load', syncInitialHashPosition)
+    document.fonts?.ready.then(syncInitialHashPosition)
+
     return () => {
       document.removeEventListener('click', handleDocumentClick)
+      window.removeEventListener('load', syncInitialHashPosition)
       lenis.destroy()
     }
   }, [])
