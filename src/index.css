@@ -352,7 +352,7 @@ h3 {
   min-height: 100svh;
   display: flex;
   align-items: center;
-  padding: 7rem 0 4rem;
+  padding: 9rem 0 4rem;
 }
 
 .hero--single::before,
@@ -1040,7 +1040,7 @@ textarea:focus {
   }
 
   .hero--single {
-    padding-top: 6rem;
+    padding-top: 7.5rem;
   }
 
   .industries-grid,
