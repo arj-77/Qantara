@@ -12,9 +12,10 @@ const revealVariants = {
   },
 }
 
-export function Reveal({ className = '', children, delay = 0 }) {
+export function Reveal({ className = '', children, delay = 0, ...props }) {
   return (
     <motion.div
+      {...props}
       className={className}
       variants={revealVariants}
       initial="hidden"

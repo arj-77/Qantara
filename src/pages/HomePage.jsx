@@ -46,9 +46,9 @@ export function HomePage() {
         </div>
       </section>
 
-      <section id="about" className="section section--about">
+      <section className="section section--about">
         <div className="container about-composition">
-          <Reveal className="about-composition__intro">
+          <Reveal id="about" className="about-composition__intro anchor-target">
             <p className="eyebrow">About</p>
             <h2>Procurement support for buyers who need confidence before they commit.</h2>
           </Reveal>
@@ -80,9 +80,9 @@ export function HomePage() {
         </div>
       </section>
 
-      <section id="industries" className="section section--industries">
+      <section className="section section--industries">
         <div className="container industries-composition">
-          <Reveal className="industries-composition__heading">
+          <Reveal id="industries" className="industries-composition__heading anchor-target">
             <p className="eyebrow">Industries</p>
             <h2>Built for equipment-intensive sectors where uptime matters.</h2>
           </Reveal>
@@ -105,7 +105,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <section id="sourcing" className="section section--sourcing" data-header-theme="dark">
+      <section className="section section--sourcing" data-header-theme="dark">
         <div className="container sourcing-composition">
           <div className="sourcing-composition__visuals">
             <Reveal className="sourcing-globe">
@@ -130,7 +130,7 @@ export function HomePage() {
           </div>
 
           <div className="sourcing-composition__copy">
-            <Reveal>
+            <Reveal id="sourcing" className="anchor-target">
               <p className="eyebrow">Global Reach</p>
               <h2>One page, one sourcing story, and a clearer path from enquiry to delivery.</h2>
               <p className="section-copy">
@@ -151,9 +151,9 @@ export function HomePage() {
         </div>
       </section>
 
-      <section id="contact" className="section section--contact">
+      <section className="section section--contact">
         <div className="container contact-composition">
-          <Reveal className="contact-composition__heading">
+          <Reveal id="contact" className="contact-composition__heading anchor-target">
             <p className="eyebrow">RFQ / Contact</p>
             <h2>Send your requirement and start the sourcing conversation.</h2>
             <p className="section-copy">

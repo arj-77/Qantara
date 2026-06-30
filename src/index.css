@@ -84,6 +84,10 @@ section[id] {
   scroll-margin-top: 10rem;
 }
 
+.anchor-target {
+  scroll-margin-top: 10rem;
+}
+
 .eyebrow {
   margin: 0;
   color: var(--amber);
