@@ -158,8 +158,8 @@ export function HomePage() {
             <h2>Send your requirement and start the sourcing conversation.</h2>
             <p className="section-copy">
               Share the part reference, delivery requirement, and any technical notes you already
-              have. The current form is front-end only and ready for backend or CRM integration
-              later.
+              have. RFQ submissions are sent directly to Qantara for review and follow-up by
+              email.
             </p>
           </Reveal>
 

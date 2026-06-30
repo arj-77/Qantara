@@ -164,7 +164,7 @@ export function RfqForm() {
 
       <aside className="contact-card card">
         <p className="eyebrow">Contact Details</p>
-        <h2>Commercial contact placeholder</h2>
+        <h2>Commercial contact</h2>
         <div className="contact-card__items">
           <a href="mailto:enquiries@qantara.uk">enquiries@qantara.uk</a>
           <span>United Kingdom</span>
@@ -175,7 +175,7 @@ export function RfqForm() {
         </p>
         <div className="contact-card__cta">
           <span className="panel-chip">Response aim</span>
-          <p>Professional acknowledgement and requirement review once email handling is connected.</p>
+          <p>RFQ submissions are reviewed by Qantara and followed up by email.</p>
         </div>
       </aside>
     </div>
