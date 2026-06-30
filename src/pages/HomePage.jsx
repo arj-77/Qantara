@@ -26,7 +26,7 @@ export function HomePage() {
               markets.
             </p>
             <div className="hero-single__actions">
-              <a className="button button--solid" href="#contact">
+              <a className="button button--solid" href="#rfq-form">
                 Request a Quote
               </a>
               <a className="button button--ghost" href="#industries">
@@ -105,7 +105,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="section section--sourcing" data-header-theme="dark">
+      <section id="sourcing" className="section section--sourcing" data-header-theme="dark">
         <div className="container sourcing-composition">
           <div className="sourcing-composition__visuals">
             <Reveal className="sourcing-globe">
@@ -130,7 +130,7 @@ export function HomePage() {
           </div>
 
           <div className="sourcing-composition__copy">
-            <Reveal id="sourcing" className="anchor-target">
+            <Reveal>
               <p className="eyebrow">Global Reach</p>
               <h2>One page, one sourcing story, and a clearer path from enquiry to delivery.</h2>
               <p className="section-copy">

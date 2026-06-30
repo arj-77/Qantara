@@ -67,7 +67,7 @@ export function RfqForm() {
   }
 
   return (
-    <div className="rfq-layout">
+    <div id="rfq-form" className="rfq-layout anchor-target">
       <form className="rfq-form card" noValidate onSubmit={handleSubmit}>
         <div className="stack-sm">
           <p className="eyebrow">Request for Quote</p>

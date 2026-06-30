@@ -71,7 +71,7 @@ function Header() {
             <div className="header-actions">
               <a
                 className="button button--solid nav-cta"
-                href="#contact"
+                href="#rfq-form"
                 onClick={handleNavClick}
               >
                 Request a Quote
