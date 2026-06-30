@@ -14,7 +14,6 @@ function buildEmailText(formData) {
     `Quantity: ${formData.quantity}`,
     `Required Delivery Location: ${formData.deliveryLocation}`,
     `Urgency: ${formData.urgency}`,
-    `Upload / Spec Reference: ${formData.upload || 'Not provided'}`,
     '',
     'Additional Notes:',
     formData.notes || 'Not provided',

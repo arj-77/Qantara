@@ -8,7 +8,6 @@ export const initialRfqForm = {
   quantity: '',
   deliveryLocation: '',
   urgency: '',
-  upload: '',
   notes: '',
 }
 
@@ -22,7 +21,6 @@ const fieldLimits = {
   quantity: 60,
   deliveryLocation: 160,
   urgency: 40,
-  upload: 280,
   notes: 3000,
 }
 

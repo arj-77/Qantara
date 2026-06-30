@@ -135,15 +135,6 @@ export function RfqForm() {
             {errors.urgency ? <span className="field-error">{errors.urgency}</span> : null}
           </label>
           <label className="form-grid__full">
-            Upload Drawing / Specification Placeholder
-            <input
-              name="upload"
-              value={formData.upload}
-              onChange={handleChange}
-              placeholder="Placeholder only. Add real file upload integration later."
-            />
-          </label>
-          <label className="form-grid__full">
             Additional Notes
             <textarea name="notes" rows="5" value={formData.notes} onChange={handleChange} />
           </label>
