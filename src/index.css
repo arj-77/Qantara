@@ -308,6 +308,12 @@ h3 {
   transform: translateY(-2px);
 }
 
+.button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+  transform: none;
+}
+
 .button--solid {
   background: linear-gradient(135deg, var(--navy-900), #17395f);
   color: white;

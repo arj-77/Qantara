@@ -1,46 +1,12 @@
 import { useState } from 'react'
-
-const initialForm = {
-  name: '',
-  company: '',
-  email: '',
-  phone: '',
-  country: '',
-  partNumber: '',
-  manufacturer: '',
-  quantity: '',
-  deliveryLocation: '',
-  urgency: '',
-  upload: '',
-  notes: '',
-}
-
-function validate(formData) {
-  const errors = {}
-
-  if (!formData.name.trim()) errors.name = 'Please enter your name.'
-  if (!formData.company.trim()) errors.company = 'Please enter your company name.'
-  if (!formData.email.trim()) {
-    errors.email = 'Please enter your email address.'
-  } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-    errors.email = 'Please enter a valid email address.'
-  }
-
-  if (!formData.country.trim()) errors.country = 'Please enter your country.'
-  if (!formData.partNumber.trim()) errors.partNumber = 'Please enter a part number or reference.'
-  if (!formData.quantity.trim()) errors.quantity = 'Please enter the required quantity.'
-  if (!formData.deliveryLocation.trim()) {
-    errors.deliveryLocation = 'Please enter the required delivery location.'
-  }
-  if (!formData.urgency.trim()) errors.urgency = 'Please select the urgency.'
-
-  return errors
-}
+import { initialRfqForm, validateRfqForm } from '../lib/rfq'
 
 export function RfqForm() {
-  const [formData, setFormData] = useState(initialForm)
+  const [formData, setFormData] = useState(initialRfqForm)
   const [errors, setErrors] = useState({})
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -59,16 +25,45 @@ export function RfqForm() {
   function handleSubmit(event) {
     event.preventDefault()
 
-    const nextErrors = validate(formData)
+    const { errors: nextErrors, formData: normalizedFormData } = validateRfqForm(formData)
     setErrors(nextErrors)
+    setSubmitError('')
 
     if (Object.keys(nextErrors).length > 0) {
       setSubmitted(false)
       return
     }
 
-    setSubmitted(true)
-    setFormData(initialForm)
+    setIsSubmitting(true)
+
+    fetch('/api/rfq', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(normalizedFormData),
+    })
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({}))
+
+        if (!response.ok) {
+          if (data.fieldErrors) {
+            setErrors(data.fieldErrors)
+          }
+
+          throw new Error(data.error || 'We could not send your RFQ right now.')
+        }
+
+        setSubmitted(true)
+        setFormData(initialRfqForm)
+      })
+      .catch((error) => {
+        setSubmitted(false)
+        setSubmitError(error instanceof Error ? error.message : 'We could not send your RFQ right now.')
+      })
+      .finally(() => {
+        setIsSubmitting(false)
+      })
   }
 
   return (
@@ -159,19 +154,23 @@ export function RfqForm() {
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="button button--solid">
-            Submit RFQ
+          <button type="submit" className="button button--solid" disabled={isSubmitting}>
+            {isSubmitting ? 'Sending...' : 'Submit RFQ'}
           </button>
           <p className="form-note">
-            Front-end submission only. Add email or CRM integration in this component when your
-            backend workflow is ready.
+            Your request is sent securely to the Qantara RFQ inbox through the site backend.
           </p>
         </div>
 
+        {submitError ? (
+          <div className="field-error" role="alert">
+            {submitError}
+          </div>
+        ) : null}
+
         {submitted ? (
           <div className="success-banner" role="status" aria-live="polite">
-            Thank you. Your RFQ has been captured locally and is ready to be connected to email or
-            CRM handling.
+            Thank you. Your RFQ has been sent successfully and is ready for review.
           </div>
         ) : null}
       </form>

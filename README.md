@@ -1,16 +1,45 @@
-# React + Vite
+# Qantara
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Marketing site for Qantara, built with React and Vite, and deployed on Vercel.
 
-Currently, two official plugins are available:
+## Local development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Install dependencies and start the frontend:
 
-## React Compiler
+```bash
+npm install
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## RFQ email flow
 
-## Expanding the Oxlint configuration
+The RFQ form now posts to the Vercel serverless route at `/api/rfq`, which sends the submission through Resend.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+### Required environment variables
+
+Create a local `.env` if you want the values available in development, and add the same variables in your Vercel project settings:
+
+```bash
+RESEND_API_KEY=your_resend_api_key
+RFQ_FROM_EMAIL=Qantara RFQ <rfq@yourdomain.com>
+RFQ_TO_EMAIL=info@qantara.uk
+```
+
+Notes:
+
+- `RFQ_FROM_EMAIL` must use a sender address/domain verified in Resend.
+- `RFQ_TO_EMAIL` is the inbox that should receive quote requests.
+- The current upload field is still a placeholder text field, not a real file upload.
+
+### Vercel setup
+
+1. In Resend, create an API key.
+2. Verify the sending domain or sender address you want to use.
+3. In Vercel, open your project settings and add `RESEND_API_KEY`, `RFQ_FROM_EMAIL`, and `RFQ_TO_EMAIL`.
+4. Redeploy the project.
+
+## Production build
+
+```bash
+npm run build
+```
