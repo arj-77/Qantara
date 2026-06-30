@@ -151,18 +151,19 @@ h3 {
   min-height: 5.55rem;
   padding: 0.8rem 0.95rem 0.8rem 1.05rem;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.58);
   border-radius: 2rem;
   background:
-    linear-gradient(135deg, rgba(111, 70, 42, 0.66), rgba(93, 55, 31, 0.58) 52%, rgba(79, 46, 25, 0.62)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
-    rgba(86, 50, 28, 0.48);
-  backdrop-filter: blur(28px) saturate(140%);
-  -webkit-backdrop-filter: blur(28px) saturate(140%);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.58), rgba(248, 250, 252, 0.42) 52%, rgba(255, 255, 255, 0.52)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.14)),
+    rgba(255, 255, 255, 0.26);
+  backdrop-filter: blur(30px) saturate(170%) brightness(1.03);
+  -webkit-backdrop-filter: blur(30px) saturate(170%) brightness(1.03);
   box-shadow:
-    0 20px 44px rgba(31, 18, 10, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+    0 18px 42px rgba(8, 17, 31, 0.1),
+    0 8px 24px rgba(255, 255, 255, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.22);
   isolation: isolate;
 }
 
@@ -176,18 +177,18 @@ h3 {
 .header-shell::before {
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04) 38%, rgba(255, 255, 255, 0.06)),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 26%, transparent 74%, rgba(255, 255, 255, 0.05));
-  opacity: 0.9;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12) 38%, rgba(255, 255, 255, 0.16)),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.18), transparent 26%, transparent 74%, rgba(255, 255, 255, 0.12));
+  opacity: 1;
 }
 
 .header-shell::after {
   inset: 1px;
   border-radius: calc(2rem - 1px);
   background:
-    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.14), transparent 28%),
-    radial-gradient(circle at 78% 18%, rgba(205, 132, 74, 0.14), transparent 26%);
-  opacity: 0.76;
+    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.28), transparent 30%),
+    radial-gradient(circle at 82% 12%, rgba(198, 144, 46, 0.06), transparent 24%);
+  opacity: 0.72;
 }
 
 .header-brand {
@@ -232,7 +233,7 @@ h3 {
 .nav-link {
   padding: 0.7rem 0.85rem;
   border-radius: 999px;
-  color: rgba(255, 247, 238, 0.94);
+  color: var(--slate-700);
   font-size: 0.98rem;
   font-weight: 700;
   line-height: 1;
@@ -244,34 +245,35 @@ h3 {
 
 .nav-link:hover,
 .nav-link:focus-visible {
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
+  background: rgba(12, 26, 49, 0.06);
+  color: var(--navy-900);
 }
 
 .site-header--inverse .nav-link {
-  color: rgba(255, 247, 238, 0.94);
+  color: var(--slate-700);
 }
 
 .site-header--inverse .nav-link:hover,
 .site-header--inverse .nav-link:focus-visible {
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
+  background: rgba(12, 26, 49, 0.06);
+  color: var(--navy-900);
 }
 
 .site-header--inverse .header-shell {
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.42);
   box-shadow:
-    0 22px 48px rgba(16, 9, 4, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    0 18px 42px rgba(2, 8, 18, 0.18),
+    0 8px 24px rgba(255, 255, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.18);
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .header-shell {
     background:
-      linear-gradient(135deg, rgba(110, 67, 39, 0.96), rgba(94, 55, 30, 0.94) 52%, rgba(83, 48, 27, 0.96)),
-      rgba(90, 52, 30, 0.95);
-    border-color: rgba(255, 255, 255, 0.08);
+      linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(245, 248, 252, 0.88) 52%, rgba(255, 255, 255, 0.9)),
+      rgba(255, 255, 255, 0.88);
+    border-color: rgba(255, 255, 255, 0.7);
   }
 }
 
@@ -286,8 +288,8 @@ h3 {
   border: 0;
   border-radius: 999px;
   padding: 0.7rem 1rem;
-  background: #c67143;
-  color: #fff7ef;
+  background: var(--navy-900);
+  color: white;
   font-weight: 800;
 }
 
@@ -335,14 +337,14 @@ h3 {
   padding-inline: 1.45rem;
   border-radius: 1.5rem;
   white-space: nowrap;
-  background: #c67143;
-  color: #fff7ef;
-  box-shadow: none;
+  background: linear-gradient(135deg, var(--navy-900), #17395f);
+  color: white;
+  box-shadow: var(--shadow-soft);
 }
 
 .nav-cta:hover,
 .nav-cta:focus-visible {
-  background: #d07a4c;
+  background: linear-gradient(135deg, #102544, #1c436f);
 }
 
 .hero--single {
