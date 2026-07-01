@@ -1,5 +1,33 @@
-import { useState } from 'react'
-import { initialRfqForm, validateRfqForm } from '../lib/rfq'
+import { useRef, useState } from 'react'
+import { initialRfqForm, maxAttachmentSize, validateAttachment, validateRfqForm } from '../lib/rfq'
+
+const attachmentHint = 'PDF, image, document, spreadsheet, or text file up to 2 MB.'
+
+function fileToAttachment(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+
+    reader.onload = () => {
+      const result = typeof reader.result === 'string' ? reader.result : ''
+      const content = result.split(',')[1]
+
+      if (!content) {
+        reject(new Error('The attachment could not be processed. Please try again.'))
+        return
+      }
+
+      resolve({
+        filename: file.name,
+        type: file.type || 'application/octet-stream',
+        size: file.size,
+        content,
+      })
+    }
+
+    reader.onerror = () => reject(new Error('The attachment could not be processed. Please try again.'))
+    reader.readAsDataURL(file)
+  })
+}
 
 export function RfqForm() {
   const [formData, setFormData] = useState(initialRfqForm)
@@ -8,6 +36,9 @@ export function RfqForm() {
   const [submitError, setSubmitError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [pulseFields, setPulseFields] = useState([])
+  const [attachment, setAttachment] = useState(null)
+  const [dragActive, setDragActive] = useState(false)
+  const fileInputRef = useRef(null)
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -23,10 +54,80 @@ export function RfqForm() {
     }))
   }
 
+  async function handleAttachment(file) {
+    if (!file) {
+      return
+    }
+
+    const sizeError = file.size > maxAttachmentSize ? 'Please upload a file smaller than 2 MB.' : ''
+    if (sizeError) {
+      setErrors((current) => ({ ...current, attachment: sizeError }))
+      setAttachment(null)
+      return
+    }
+
+    try {
+      const nextAttachment = await fileToAttachment(file)
+      const attachmentError = validateAttachment(nextAttachment)
+
+      if (attachmentError) {
+        setErrors((current) => ({ ...current, attachment: attachmentError }))
+        setAttachment(null)
+        return
+      }
+
+      setAttachment(nextAttachment)
+      setErrors((current) => ({ ...current, attachment: '' }))
+    } catch (error) {
+      setErrors((current) => ({
+        ...current,
+        attachment:
+          error instanceof Error ? error.message : 'The attachment could not be processed. Please try again.',
+      }))
+      setAttachment(null)
+    }
+  }
+
+  function handleFileChange(event) {
+    const [file] = Array.from(event.target.files || [])
+    void handleAttachment(file)
+  }
+
+  function handleDragOver(event) {
+    event.preventDefault()
+    setDragActive(true)
+  }
+
+  function handleDragLeave(event) {
+    event.preventDefault()
+    setDragActive(false)
+  }
+
+  function handleDrop(event) {
+    event.preventDefault()
+    setDragActive(false)
+    const [file] = Array.from(event.dataTransfer.files || [])
+    void handleAttachment(file)
+  }
+
+  function clearAttachment(event) {
+    event?.stopPropagation()
+    setAttachment(null)
+    setErrors((current) => ({ ...current, attachment: '' }))
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
   function handleSubmit(event) {
     event.preventDefault()
 
-    const { errors: nextErrors, formData: normalizedFormData } = validateRfqForm(formData)
+    const payload = {
+      ...formData,
+      attachment,
+    }
+
+    const { errors: nextErrors, formData: normalizedFormData } = validateRfqForm(payload)
     setErrors(nextErrors)
     setSubmitError('')
 
@@ -46,7 +147,10 @@ export function RfqForm() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(normalizedFormData),
+      body: JSON.stringify({
+        ...normalizedFormData,
+        attachment,
+      }),
     })
       .then(async (response) => {
         const data = await response.json().catch(() => ({}))
@@ -61,6 +165,7 @@ export function RfqForm() {
 
         setSubmitted(true)
         setFormData(initialRfqForm)
+        clearAttachment()
       })
       .catch((error) => {
         setSubmitted(false)
@@ -91,7 +196,12 @@ export function RfqForm() {
     return (
       <span className="field-label">
         {label}
-        {isRequired ? <span className="required-mark" aria-hidden="true"> *</span> : null}
+        {isRequired ? (
+          <span className="required-mark" aria-hidden="true">
+            {' '}
+            *
+          </span>
+        ) : null}
       </span>
     )
   }
@@ -100,25 +210,37 @@ export function RfqForm() {
     <div id="rfq-form" className="rfq-layout anchor-target">
       <form className="rfq-form card" noValidate onSubmit={handleSubmit}>
         <div className="stack-sm">
-          <p className="eyebrow">Request for Quote</p>
-          <h2>Send your sourcing requirement</h2>
+          <p className="eyebrow">Request a Quote</p>
+          <h2>Send your RFQ to the sourcing desk</h2>
           <p>
-            Share the part details you have today and Qantara can begin a structured sourcing
-            review.
+            Share the technical requirement, reference data, delivery destination, and supporting
+            documents so Qantara Trading can begin supplier search and quotation review.
           </p>
         </div>
 
         <div className="form-grid">
           <label>
-            {renderLabel('Name', true)}
-            <input name="name" value={formData.name} onChange={handleChange} {...getFieldProps('name')} />
-            {errors.name ? <span className="field-error">{errors.name}</span> : null}
+            {renderLabel('Company name', true)}
+            <input
+              name="companyName"
+              value={formData.companyName}
+              onChange={handleChange}
+              {...getFieldProps('companyName')}
+            />
+            {errors.companyName ? <span className="field-error">{errors.companyName}</span> : null}
           </label>
+
           <label>
-            {renderLabel('Company', true)}
-            <input name="company" value={formData.company} onChange={handleChange} {...getFieldProps('company')} />
-            {errors.company ? <span className="field-error">{errors.company}</span> : null}
+            {renderLabel('Contact name', true)}
+            <input
+              name="contactName"
+              value={formData.contactName}
+              onChange={handleChange}
+              {...getFieldProps('contactName')}
+            />
+            {errors.contactName ? <span className="field-error">{errors.contactName}</span> : null}
           </label>
+
           <label>
             {renderLabel('Email', true)}
             <input
@@ -130,64 +252,149 @@ export function RfqForm() {
             />
             {errors.email ? <span className="field-error">{errors.email}</span> : null}
           </label>
+
           <label>
-            {renderLabel('Country', true)}
-            <input name="country" value={formData.country} onChange={handleChange} {...getFieldProps('country')} />
-            {errors.country ? <span className="field-error">{errors.country}</span> : null}
-          </label>
-          <label>
-            {renderLabel('Part Number', true)}
+            {renderLabel('Phone / WhatsApp')}
             <input
-              name="partNumber"
-              value={formData.partNumber}
+              name="phone"
+              value={formData.phone}
               onChange={handleChange}
-              {...getFieldProps('partNumber')}
+              {...getFieldProps('phone')}
             />
-            {errors.partNumber ? <span className="field-error">{errors.partNumber}</span> : null}
+            {errors.phone ? <span className="field-error">{errors.phone}</span> : null}
           </label>
+
+          <label className="form-grid__full">
+            {renderLabel('Product required', true)}
+            <textarea
+              name="productRequired"
+              rows="3"
+              value={formData.productRequired}
+              onChange={handleChange}
+              {...getFieldProps('productRequired')}
+            />
+            {errors.productRequired ? <span className="field-error">{errors.productRequired}</span> : null}
+          </label>
+
           <label>
-            {renderLabel('Manufacturer / OEM')}
-            <input name="manufacturer" value={formData.manufacturer} onChange={handleChange} {...getFieldProps('manufacturer')} />
+            {renderLabel('Brand / part number')}
+            <input
+              name="brandPartNumber"
+              value={formData.brandPartNumber}
+              onChange={handleChange}
+              {...getFieldProps('brandPartNumber')}
+            />
           </label>
+
           <label>
             {renderLabel('Quantity', true)}
-            <input name="quantity" value={formData.quantity} onChange={handleChange} {...getFieldProps('quantity')} />
+            <input
+              name="quantity"
+              value={formData.quantity}
+              onChange={handleChange}
+              {...getFieldProps('quantity')}
+            />
             {errors.quantity ? <span className="field-error">{errors.quantity}</span> : null}
           </label>
+
           <label>
-            {renderLabel('Required Delivery Location', true)}
+            {renderLabel('Delivery country', true)}
             <input
-              name="deliveryLocation"
-              value={formData.deliveryLocation}
+              name="deliveryCountry"
+              value={formData.deliveryCountry}
               onChange={handleChange}
-              {...getFieldProps('deliveryLocation')}
+              {...getFieldProps('deliveryCountry')}
             />
-            {errors.deliveryLocation ? (
-              <span className="field-error">{errors.deliveryLocation}</span>
+            {errors.deliveryCountry ? <span className="field-error">{errors.deliveryCountry}</span> : null}
+          </label>
+
+          <label>
+            {renderLabel('Required certificates')}
+            <input
+              name="requiredCertificates"
+              value={formData.requiredCertificates}
+              onChange={handleChange}
+              {...getFieldProps('requiredCertificates')}
+            />
+          </label>
+
+          <label>
+            {renderLabel('Target delivery date')}
+            <input
+              name="targetDeliveryDate"
+              type="date"
+              value={formData.targetDeliveryDate}
+              onChange={handleChange}
+              {...getFieldProps('targetDeliveryDate')}
+            />
+            {errors.targetDeliveryDate ? (
+              <span className="field-error">{errors.targetDeliveryDate}</span>
             ) : null}
           </label>
-          <label>
-            {renderLabel('Urgency', true)}
-            <select name="urgency" value={formData.urgency} onChange={handleChange} {...getFieldProps('urgency')}>
-              <option value="">Select urgency</option>
-              <option value="urgent">Urgent replacement</option>
-              <option value="planned">Planned procurement</option>
-              <option value="budgetary">Budgetary enquiry</option>
-            </select>
-            {errors.urgency ? <span className="field-error">{errors.urgency}</span> : null}
-          </label>
+
           <label className="form-grid__full">
-            {renderLabel('Additional Notes')}
-            <textarea name="notes" rows="5" value={formData.notes} onChange={handleChange} {...getFieldProps('notes')} />
+            {renderLabel('Additional notes')}
+            <textarea
+              name="notes"
+              rows="5"
+              value={formData.notes}
+              onChange={handleChange}
+              {...getFieldProps('notes')}
+            />
           </label>
+
+          <div className="form-grid__full">
+            <span className="field-label">Upload drawings / specifications</span>
+            <div
+              className={[
+                'upload-dropzone',
+                dragActive ? 'upload-dropzone--active' : '',
+                errors.attachment ? 'upload-dropzone--invalid' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  fileInputRef.current?.click()
+                }
+              }}
+            >
+              <input
+                ref={fileInputRef}
+                className="upload-dropzone__input"
+                type="file"
+                accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.doc,.docx,.xls,.xlsx"
+                onChange={handleFileChange}
+              />
+              <p className="upload-dropzone__title">Drag and drop a file here, or click to upload</p>
+              <p className="upload-dropzone__hint">{attachmentHint}</p>
+              {attachment ? (
+                <div className="upload-dropzone__file">
+                  <span>{attachment.filename}</span>
+                  <button type="button" className="upload-dropzone__remove" onClick={clearAttachment}>
+                    Remove
+                  </button>
+                </div>
+              ) : null}
+            </div>
+            {errors.attachment ? <span className="field-error">{errors.attachment}</span> : null}
+          </div>
         </div>
 
         <div className="form-actions">
           <button type="submit" className="button button--solid" disabled={isSubmitting}>
-            {isSubmitting ? 'Sending...' : 'Submit RFQ'}
+            {isSubmitting ? 'Sending RFQ...' : 'Submit an RFQ'}
           </button>
           <p className="form-note">
-            Your request is sent securely to the Qantara RFQ inbox through the site backend.
+            Required fields are marked with a red asterisk. RFQs are sent securely through the
+            site backend for review by Qantara Trading.
           </p>
         </div>
 
@@ -205,19 +412,18 @@ export function RfqForm() {
       </form>
 
       <aside className="contact-card card">
-        <p className="eyebrow">Contact Details</p>
-        <h2>Commercial contact</h2>
+        <p className="eyebrow">Commercial contact</p>
+        <h2>Structured technical and sourcing support</h2>
         <div className="contact-card__items">
           <a href="mailto:enquiries@qantara.uk">enquiries@qantara.uk</a>
-          <span>United Kingdom</span>
         </div>
         <p>
-          Qantara supports buyers with structured sourcing reviews, commercial comparisons, and
-          procurement coordination for industrial part requirements.
+          Qantara Trading supports industrial buyers with supplier search, technical document
+          review, quotation comparison, and export-linked coordination.
         </p>
         <div className="contact-card__cta">
-          <span className="panel-chip">Response aim</span>
-          <p>RFQ submissions are reviewed by Qantara and followed up by email.</p>
+          <span className="panel-chip">Response focus</span>
+          <p>Clear quotation handling, documentation visibility, and commercially practical follow-up.</p>
         </div>
       </aside>
     </div>

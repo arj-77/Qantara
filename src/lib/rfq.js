@@ -1,28 +1,44 @@
 export const initialRfqForm = {
-  name: '',
-  company: '',
+  companyName: '',
+  contactName: '',
   email: '',
-  country: '',
-  partNumber: '',
-  manufacturer: '',
+  phone: '',
+  productRequired: '',
+  brandPartNumber: '',
   quantity: '',
-  deliveryLocation: '',
-  urgency: '',
+  deliveryCountry: '',
+  requiredCertificates: '',
+  targetDeliveryDate: '',
   notes: '',
 }
 
 const fieldLimits = {
-  name: 120,
-  company: 160,
+  companyName: 160,
+  contactName: 120,
   email: 160,
-  country: 120,
-  partNumber: 160,
-  manufacturer: 160,
+  phone: 80,
+  productRequired: 240,
+  brandPartNumber: 180,
   quantity: 60,
-  deliveryLocation: 160,
-  urgency: 40,
+  deliveryCountry: 120,
+  requiredCertificates: 240,
+  targetDeliveryDate: 40,
   notes: 3000,
 }
+
+const allowedAttachmentTypes = new Set([
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'text/plain',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+])
+
+export const maxAttachmentSize = 2 * 1024 * 1024
 
 function sanitizeValue(value, maxLength) {
   return String(value ?? '')
@@ -36,12 +52,36 @@ export function normalizeRfqPayload(payload) {
   )
 }
 
+export function validateAttachment(attachment) {
+  if (!attachment) {
+    return ''
+  }
+
+  if (!attachment.filename || !attachment.content || !attachment.type) {
+    return 'The attachment could not be processed. Please re-upload the file.'
+  }
+
+  if (typeof attachment.size !== 'number' || attachment.size <= 0) {
+    return 'The attachment could not be processed. Please re-upload the file.'
+  }
+
+  if (attachment.size > maxAttachmentSize) {
+    return 'Please upload a file smaller than 2 MB.'
+  }
+
+  if (!allowedAttachmentTypes.has(attachment.type)) {
+    return 'Please upload a PDF, image, document, spreadsheet, or text file.'
+  }
+
+  return ''
+}
+
 export function validateRfqForm(rawPayload) {
   const formData = normalizeRfqPayload(rawPayload)
   const errors = {}
 
-  if (!formData.name) errors.name = 'Please enter your name.'
-  if (!formData.company) errors.company = 'Please enter your company name.'
+  if (!formData.companyName) errors.companyName = 'Please enter your company name.'
+  if (!formData.contactName) errors.contactName = 'Please enter your contact name.'
 
   if (!formData.email) {
     errors.email = 'Please enter your email address.'
@@ -49,13 +89,30 @@ export function validateRfqForm(rawPayload) {
     errors.email = 'Please enter a valid email address.'
   }
 
-  if (!formData.country) errors.country = 'Please enter your country.'
-  if (!formData.partNumber) errors.partNumber = 'Please enter a part number or reference.'
-  if (!formData.quantity) errors.quantity = 'Please enter the required quantity.'
-  if (!formData.deliveryLocation) {
-    errors.deliveryLocation = 'Please enter the required delivery location.'
+  if (formData.phone && formData.phone.length < 6) {
+    errors.phone = 'Please enter a valid phone or WhatsApp number.'
   }
-  if (!formData.urgency) errors.urgency = 'Please select the urgency.'
+
+  if (!formData.productRequired) {
+    errors.productRequired = 'Please describe the product required.'
+  }
+
+  if (!formData.quantity) {
+    errors.quantity = 'Please enter the required quantity.'
+  }
+
+  if (!formData.deliveryCountry) {
+    errors.deliveryCountry = 'Please enter the delivery country.'
+  }
+
+  if (formData.targetDeliveryDate && Number.isNaN(Date.parse(formData.targetDeliveryDate))) {
+    errors.targetDeliveryDate = 'Please enter a valid target delivery date.'
+  }
+
+  const attachmentError = validateAttachment(rawPayload?.attachment)
+  if (attachmentError) {
+    errors.attachment = attachmentError
+  }
 
   return { errors, formData }
 }

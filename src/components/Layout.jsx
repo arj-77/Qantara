@@ -74,7 +74,7 @@ function Header() {
                 href="#rfq-form"
                 onClick={handleNavClick}
               >
-                Request a Quote
+                Submit an RFQ
               </a>
             </div>
           </nav>
@@ -92,8 +92,8 @@ function Footer() {
           <p className="eyebrow">Qantara</p>
           <h2>qantara.uk</h2>
           <p className="footer-copy">
-            Independent sourcing and procurement support for OEM machinery parts and industrial
-            components.
+            Global industrial sourcing and procurement support for technical parts, machinery,
+            OEM spares, and specialist equipment.
           </p>
         </div>
 
@@ -119,7 +119,7 @@ function Footer() {
 
       <div className="container footer-legal">
         <p>
-          Qantara is an independent sourcing and procurement support company.
+          Qantara Trading is an independent sourcing and procurement support company.
           Manufacturer names, trademarks, part numbers, and references are used for identification
           purposes only. Unless expressly stated, Qantara is not affiliated with or endorsed by
           the original equipment manufacturers.
@@ -136,7 +136,6 @@ function Footer() {
 export function Layout({ children }) {
   return (
     <>
-      <div id="home" aria-hidden="true" />
       <SmoothScroll />
       <Header />
       <main>{children}</main>

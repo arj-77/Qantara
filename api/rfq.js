@@ -1,21 +1,22 @@
 import { Resend } from 'resend'
-import { validateRfqForm } from '../src/lib/rfq.js'
+import { validateAttachment, validateRfqForm } from '../src/lib/rfq.js'
 
 function buildEmailText(formData) {
   return [
-    'New Qantara RFQ submission',
+    'New Qantara Trading RFQ submission',
     '',
-    `Name: ${formData.name}`,
-    `Company: ${formData.company}`,
+    `Company name: ${formData.companyName}`,
+    `Contact name: ${formData.contactName}`,
     `Email: ${formData.email}`,
-    `Country: ${formData.country}`,
-    `Part Number: ${formData.partNumber}`,
-    `Manufacturer / OEM: ${formData.manufacturer || 'Not provided'}`,
+    `Phone / WhatsApp: ${formData.phone || 'Not provided'}`,
+    `Product required: ${formData.productRequired}`,
+    `Brand / part number: ${formData.brandPartNumber || 'Not provided'}`,
     `Quantity: ${formData.quantity}`,
-    `Required Delivery Location: ${formData.deliveryLocation}`,
-    `Urgency: ${formData.urgency}`,
+    `Delivery country: ${formData.deliveryCountry}`,
+    `Required certificates: ${formData.requiredCertificates || 'Not provided'}`,
+    `Target delivery date: ${formData.targetDeliveryDate || 'Not provided'}`,
     '',
-    'Additional Notes:',
+    'Additional notes:',
     formData.notes || 'Not provided',
   ].join('\n')
 }
@@ -49,7 +50,18 @@ export default async function handler(req, res) {
   const { errors, formData } = validateRfqForm(payload)
 
   if (Object.keys(errors).length > 0) {
-    return res.status(400).json({ error: 'Please correct the highlighted fields.', fieldErrors: errors })
+    return res.status(400).json({
+      error: 'Please correct the highlighted fields.',
+      fieldErrors: errors,
+    })
+  }
+
+  const attachmentError = validateAttachment(payload?.attachment)
+  if (attachmentError) {
+    return res.status(400).json({
+      error: 'Please correct the highlighted fields.',
+      fieldErrors: { attachment: attachmentError },
+    })
   }
 
   const resend = new Resend(resendApiKey)
@@ -58,9 +70,18 @@ export default async function handler(req, res) {
     await resend.emails.send({
       from,
       to: [to],
-      subject: `New RFQ from ${formData.company} (${formData.partNumber})`,
+      subject: `New RFQ from ${formData.companyName} (${formData.brandPartNumber || formData.productRequired})`,
       text: buildEmailText(formData),
       replyTo: formData.email,
+      attachments: payload?.attachment
+        ? [
+            {
+              filename: payload.attachment.filename,
+              content: payload.attachment.content,
+              contentType: payload.attachment.type,
+            },
+          ]
+        : undefined,
     })
 
     return res.status(200).json({ ok: true })

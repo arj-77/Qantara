@@ -3,6 +3,13 @@ import Lenis from 'lenis'
 
 const easeOutExpo = (time) => Math.min(1, 1.001 - Math.pow(2, -10 * time))
 
+const hashOffsets = {
+  '#about': -12,
+  '#services': -28,
+  '#industries': -24,
+  '#rfq-form': -22,
+}
+
 export function SmoothScroll() {
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -46,8 +53,10 @@ export function SmoothScroll() {
         return
       }
 
+      const extraOffset = hashOffsets[hash] ?? 0
+
       lenis.scrollTo(target, {
-        offset: -getHeaderOffset(),
+        offset: -getHeaderOffset() - extraOffset,
         duration: immediate ? 0 : 0.72,
         easing: easeOutExpo,
         immediate,
